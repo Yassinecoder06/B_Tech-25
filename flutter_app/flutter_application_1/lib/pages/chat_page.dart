@@ -6,10 +6,12 @@ import 'package:flutter_application_1/services/chat_service.dart';
 class ChatPage extends StatelessWidget {
   final String receiverEmail;
   final String userEmail;
+  final String username;
 
   ChatPage({super.key, 
     required this.receiverEmail,
     required this.userEmail,
+    required this.username,
   });
 
   final TextEditingController messageController = TextEditingController();
@@ -26,7 +28,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receiverEmail),
+        title: Text(username),
       ),
       body: Column(
         children: [

@@ -33,20 +33,23 @@ class PostService {
   }
 
   Future<String> likePost(String postId, String uid, List likes) async {
-    String res = "Some error occurred";
-    try {
-      if (likes.contains(uid)) {
-        _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid])
-        });
+  String res = "Some error occurred";
+  try {
+    if (likes.contains(uid)) {
+      await _firestore.collection('posts').doc(postId).update({
+        'likes': FieldValue.arrayRemove([uid])
+      });
+      print('Like removed for post $postId by user $uid');
       } else {
-        _firestore.collection('posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid])
         });
+        print('Like added for post $postId by user $uid');
       }
       res = 'success';
     } catch (err) {
       res = err.toString();
+      print('Error in likePost: $res');
     }
     return res;
   }

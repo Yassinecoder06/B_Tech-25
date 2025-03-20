@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/welcome_page.dart';
 import 'package:flutter_application_1/providers/user_provider.dart';
+import 'package:flutter_application_1/utils/const.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,6 +21,7 @@ class App extends StatelessWidget {
 }
 
 void main() async{
+  Gemini.init(apiKey: GEMINI_API_KEY);
   await Supabase.initialize(
     url: "https://uhdtgzffszdjaeibbyxc.supabase.co",
     anonKey:

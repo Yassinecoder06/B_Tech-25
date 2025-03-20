@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/chat_page.dart';
+import 'package:flutter_application_1/pages/profile_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -36,12 +37,15 @@ class _SearchPageState extends State<SearchPage> {
     final users = FirebaseFirestore.instance.collection('users');
 
     if (searchKeyword.isEmpty) {
-      return users.snapshots();
+      return users.orderBy('username').snapshots();
     }
+
+    String capitalizedKeyword =
+        searchKeyword[0] + searchKeyword.substring(1);
 
     return users
         .orderBy('username')
-        .where('username', isGreaterThanOrEqualTo: searchKeyword.toLowerCase())
+        .startAt([capitalizedKeyword]).endAt(["$capitalizedKeyword\uf8ff"])
         .snapshots();
   }
 
@@ -110,11 +114,22 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(16),
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundImage: data['photoUrl'] != null
-                                ? NetworkImage(data['photoUrl'])
-                                : const NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
+                          leading: GestureDetector(
+                            onTap: () {
+                              // Navigate to Profile Page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(uid: data['uid'].toString()),
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundImage: data['photoUrl'] != null
+                                  ? NetworkImage(data['photoUrl'])
+                                  : const NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
+                            ),
                           ),
                           title: Text(
                             data['username'],
@@ -127,15 +142,21 @@ class _SearchPageState extends State<SearchPage> {
                             data['email'],
                             style: const TextStyle(color: Colors.grey),
                           ),
-                          trailing: const Icon(Icons.message, color: Colors.deepPurple),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                receiverEmail: data['email'],
-                                userEmail: FirebaseAuth.instance.currentUser?.email ?? '',
-                              ),
-                            ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.message, color: Colors.deepPurple),
+                            onPressed: () {
+                              // Navigate to Chat Page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                    receiverEmail: data['email'],
+                                    userEmail: FirebaseAuth.instance.currentUser?.email ?? '',
+                                    username: data['username'],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),

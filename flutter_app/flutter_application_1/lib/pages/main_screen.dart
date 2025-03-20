@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter_application_1/pages/ai_page.dart';
 import 'package:flutter_application_1/pages/feed_page.dart';
 import 'package:flutter_application_1/pages/search_page.dart';
 import 'package:flutter_application_1/pages/shop_page.dart';
@@ -22,28 +24,36 @@ class _MainScreenState extends State<MainScreen> {
     List<Widget> widgetOptions = <Widget>[
       const FeedPage(),
       const SearchPage(),
+      const AIPage(),
       const ShopPage(),
       ProfilePage(uid: currentUserUid ?? ''), // Fallback if user is not logged in
     ];
 
     return Scaffold(
-      body: widgetOptions[_selectedIndex], // Use a non-constant list
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+      backgroundColor: Colors.grey[100],
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: widgetOptions[_selectedIndex],
+      ),
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
+        backgroundColor: Colors.transparent,
+        color: Colors.purple.shade100,
+        buttonBackgroundColor: Colors.white,
+        animationDuration: const Duration(milliseconds: 300),
+        height: 60,
+        items: [
+          Icon(Icons.home, size: 30, color: Colors.purple[400]),
+          Icon(Icons.search, size: 30, color:  Colors.purple[400]),
+          Icon(Icons.camera, size: 30, color:  Colors.purple[400]),
+          Icon(Icons.shopping_cart, size: 30, color:  Colors.purple[400]),
+          Icon(Icons.person, size: 30, color:  Colors.purple[400]),
+        ],
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Shop'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        selectedItemColor: Colors.purple,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
       ),
     );
   }

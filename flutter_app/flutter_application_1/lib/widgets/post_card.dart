@@ -1,21 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/user.dart' as model;
-import 'package:flutter_application_1/providers/user_provider.dart';
 import 'package:flutter_application_1/services/post_service.dart';
 import 'package:flutter_application_1/pages/comments_page.dart';
 import 'package:flutter_application_1/utils/colors.dart';
 import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_application_1/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class PostCard extends StatefulWidget {
   final snap;
-  const PostCard({
-    super.key,
-    required this.snap,
-  });
+  const PostCard({super.key, required this.snap});
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -48,103 +43,72 @@ class _PostCardState extends State<PostCard> {
 
   deletePost(String postId) async {
     try {
-      await PostService().deletePost(postId);
+      String result = await PostService().deletePost(postId);
+      if (result == 'success') {
+        Navigator.of(context).pop();
+      } else {
+        showSnackBar(context, 'Failed to delete post');
+      }
     } catch (err) {
-      showSnackBar(
-        context,
-        err.toString(),
-      );
+      showSnackBar(context, err.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final model.User? user = Provider.of<UserProvider>(context).getUser;
-    final width = MediaQuery.of(context).size.width;
+    //final model.User? user = Provider.of<UserProvider>(context).getUser;
+
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
     return Container(
-      // boundary needed for web
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey
-        ),
-        color: Colors.purple[100]
+        border: Border.all(color: Colors.grey),
+        color: Colors.purple[100],
       ),
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
-          // HEADER SECTION OF THE POST
+          // HEADER
           Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 16,
-            ).copyWith(right: 0),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16).copyWith(right: 0),
             child: Row(
               children: <Widget>[
                 CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(
-                    widget.snap['profImage'].toString(),
-                  ),
+                  backgroundImage: NetworkImage(widget.snap['profImage'].toString()),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8,
-                    ),
+                    padding: const EdgeInsets.only(left: 8),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           widget.snap['username'].toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
                 ),
-                widget.snap['uid'].toString() == user?.uid
+                widget.snap['uid'].toString() == currentUserId.toString()
                     ? IconButton(
                         onPressed: () {
                           showDialog(
-                            useRootNavigator: false,
                             context: context,
                             builder: (context) {
-                              return Dialog(
-                                child: ListView(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shrinkWrap: true,
-                                    children: [
-                                      'Delete',
-                                    ]
-                                        .map(
-                                          (e) => InkWell(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: Text(e),
-                                              ),
-                                              onTap: () async {
-                                                String result = await PostService().deletePost(
-                                                  widget.snap['postId'].toString(),
-                                                );
-                                                if (result == 'success') {
-                                                  setState(() {}); // Refresh UI after deletion
-                                                  Navigator.of(context).pop(); // Close dialog
-                                                } else {
-                                                  showSnackBar(context, 'Failed to delete post');
-                                                }
-                                              },),
-                                        )
-                                        .toList()),
+                              return AlertDialog(
+                                title: const Text('Delete Post?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => deletePost(widget.snap['postId'].toString()),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
                               );
                             },
                           );
@@ -155,12 +119,12 @@ class _PostCardState extends State<PostCard> {
               ],
             ),
           ),
-          // IMAGE SECTION OF THE POST
+          // IMAGE SECTION
           GestureDetector(
             onDoubleTap: () {
               PostService().likePost(
                 widget.snap['postId'].toString(),
-                user!.uid,
+                currentUserId.toString(),
                 widget.snap['likes'],
               );
               setState(() {
@@ -170,32 +134,19 @@ class _PostCardState extends State<PostCard> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.4,
+                Image.network(
+                  widget.snap['postUrl'].toString(),
                   width: double.infinity,
-                  child: Image.network(
-                    widget.snap['postUrl'].toString(),
-                    //fit: BoxFit.cover,
-                  ),
+                  height: MediaQuery.of(context).size.height * 0.4,
                 ),
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
                   opacity: isLikeAnimating ? 1 : 0,
                   child: LikeAnimation(
                     isAnimating: isLikeAnimating,
-                    duration: const Duration(
-                      milliseconds: 400,
-                    ),
-                    onEnd: () {
-                      setState(() {
-                        isLikeAnimating = false;
-                      });
-                    },
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                      size: 100,
-                    ),
+                    duration: const Duration(milliseconds: 400),
+                    onEnd: () => setState(() => isLikeAnimating = false),
+                    child: const Icon(Icons.favorite, color: Colors.white, size: 100),
                   ),
                 ),
               ],
@@ -205,10 +156,10 @@ class _PostCardState extends State<PostCard> {
           Row(
             children: <Widget>[
               LikeAnimation(
-                isAnimating: widget.snap['likes'].contains(user?.uid),
+                isAnimating: widget.snap['likes'].contains(currentUserId.toString()),
                 smallLike: true,
                 child: IconButton(
-                  icon: widget.snap['likes'].contains(user?.uid)
+                  icon: widget.snap['likes'].contains(currentUserId.toString())
                       ? const Icon(
                           Icons.favorite,
                           color: Colors.red,
@@ -216,14 +167,11 @@ class _PostCardState extends State<PostCard> {
                       : const Icon(
                           Icons.favorite_border,
                         ),
-                  onPressed: () async {
-                    await PostService().likePost(
-                      widget.snap['postId'].toString(),
-                      user!.uid,
-                      widget.snap['likes'],
-                    );
-                    setState(() {});
-                  } 
+                  onPressed: () => PostService().likePost(
+                    widget.snap['postId'].toString(),
+                    currentUserId.toString(),
+                    widget.snap['likes'],
+                  ),
                 ),
               ),
               IconButton(
