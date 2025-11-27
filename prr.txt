@@ -1,0 +1,13 @@
+Jmal:
+imagine stepping out of a plane, eager for an adventure but there’s one problem you don’t know where to start. For years, tourists have faced the same problems. poor travel coordination, disconnected community, budget management, overwhelming choices and safety concerns.
+Now, picture a different scenario where you open our already-developed app WanderSphere. it instantly tackles the coordination problems with our IA system and guides, disconnected communities with our feeds and chatting space, and all the other issues that will be handled in the rest of the video.
+Mariemm:
+now moving on to the methodology and the prototype 
+so the user can either log in or sign up while providing the required information.
+SBS search browse and share is our adopted process
+starting with the search that enables users to look for accounts and places as long as tracking other's activities they can like, save, or leave a comment.
+we now turn to the share part where users can post monuments, any activity, or visits to our sponsors this section involves a lucrative reward system that features discounts and coin acquisition whose percentage depends on the service for instance the user will benefit from 3% discount on accommodations and 0.5
+
+
+
+for our tech stack, we chose Flutter for the front end and Supabase and Firebase for the backend as long as other tools in the back 

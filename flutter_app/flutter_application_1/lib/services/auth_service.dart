@@ -18,12 +18,11 @@ class AuthPage extends StatelessWidget {
           }
           //user not logged in
           else{
-            return LoginOrRegisterPage();
+            return LoginOrRegisterService();
           }
         },
         )
     );
   }
-  
 }
 

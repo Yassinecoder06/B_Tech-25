@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/post_service.dart';
-import 'package:flutter_application_1/pages/comments_page.dart';
+import 'package:flutter_application_1/pages/home_pages/comments_page.dart';
 import 'package:flutter_application_1/utils/colors.dart';
 import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_application_1/widgets/like_animation.dart';

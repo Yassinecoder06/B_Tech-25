@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/services/auth_service.dart';
 import 'package:flutter_application_1/services/post_service.dart';
+import 'package:flutter_application_1/utils/colors.dart';
 import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_application_1/widgets/follow_button.dart';
 
 
-class ProfilePage extends StatefulWidget {
+class FollowPage extends StatefulWidget {
   final String uid;
-  const ProfilePage({super.key, required this.uid});
+  const FollowPage({super.key, required this.uid});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<FollowPage> createState() => _FollowPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _FollowPageState extends State<FollowPage> {
   var userData = {};
   int postLen = 0;
   int followers = 0;
@@ -105,6 +106,11 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Colors.purple,
               title: Text(
                 userData['username'],
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               centerTitle: false,
             ),

@@ -41,8 +41,8 @@ class _PostingPageState extends State<PostingPage> {
   }
 
   void _selectImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       final Uint8List file = await image.readAsBytes();

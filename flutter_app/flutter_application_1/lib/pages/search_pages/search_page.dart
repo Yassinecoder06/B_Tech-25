@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/chat_page.dart';
-import 'package:flutter_application_1/pages/profile_page.dart';
+import 'package:flutter_application_1/pages/search_pages/chat_page.dart';
+import 'package:flutter_application_1/pages/search_pages/follow_page.dart';
+import 'package:flutter_application_1/utils/colors.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -55,10 +56,13 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.purple,
         title: Text(
           'Welcome, ${username ?? ''}',
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: primaryColor,
+            fontSize: 24,
+            fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -120,7 +124,7 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfilePage(uid: data['uid'].toString()),
+                                  builder: (context) => FollowPage(uid: data['uid'].toString()),
                                 ),
                               );
                             },

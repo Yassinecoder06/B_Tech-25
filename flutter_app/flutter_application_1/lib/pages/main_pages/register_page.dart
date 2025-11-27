@@ -86,58 +86,58 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> signUserUp(BuildContext context) async {
-  if (!context.mounted) return; // Prevent running if widget is deactivated
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  final email = emailController.text.trim();
-  final password = passwordController.text.trim();
-  final confirmPassword = confirmpasswordController.text.trim();
-  final username = usernameController.text.trim();
-  final country = countryController.text.trim();
-
-  if (password != confirmPassword) {
-    if (context.mounted) showErrorMessage("Passwords do not match!");
-    setState(() => _isLoading = false);
-    return;
-  }
-
-  if (_image == null) {
-    if (context.mounted) showErrorMessage("Please select a profile image.");
-    setState(() => _isLoading = false);
-    return;
-  }
-
-  try {
-    Auth.UserCredential userCredential =
-        await Auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    String uid = userCredential.user!.uid;
-    String? photoUrl = await StorageMethods().uploadImage(context, 'profilePics', _image!);
-
-    if (photoUrl == null) {
-      if (context.mounted) showErrorMessage("Image upload failed. Try again.");
+    if (!context.mounted) return; // Prevent running if widget is deactivated
+  
+    setState(() {
+      _isLoading = true;
+    });
+  
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmpasswordController.text.trim();
+    final username = usernameController.text.trim();
+    final country = countryController.text.trim();
+  
+    if (password != confirmPassword) {
+      if (context.mounted) showErrorMessage("Passwords do not match!");
       setState(() => _isLoading = false);
       return;
     }
-
-    await addUserDetails(username, uid, email, photoUrl, country);
-
-    if (context.mounted) Navigator.pop(context); // Navigate back on success
-    } on Auth.FirebaseAuthException catch (e) {
-      if (context.mounted) showErrorMessage(e.message.toString());
-    } finally {
-      if (context.mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  
+    if (_image == null) {
+      if (context.mounted) showErrorMessage("Please select a profile image.");
+      setState(() => _isLoading = false);
+      return;
     }
+  
+    try {
+      Auth.UserCredential userCredential =
+          await Auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+  
+      String uid = userCredential.user!.uid;
+      String? photoUrl = await StorageMethods().uploadImage(context, 'profilePics', _image!);
+  
+      if (photoUrl == null) {
+        if (context.mounted) showErrorMessage("Image upload failed. Try again.");
+        setState(() => _isLoading = false);
+        return;
+      }
+  
+      await addUserDetails(username, uid, email, photoUrl, country);
+  
+      if (context.mounted) Navigator.pop(context); // Navigate back on success
+      } on Auth.FirebaseAuthException catch (e) {
+        if (context.mounted) showErrorMessage(e.message.toString());
+      } finally {
+        if (context.mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
   }
 
   @override

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/posting_page.dart';
+import 'package:flutter_application_1/pages/home_pages/posting_page.dart';
 import 'package:flutter_application_1/utils/colors.dart';
 import 'package:flutter_application_1/widgets/post_card.dart';
 
@@ -47,7 +47,7 @@ class _FeedPageState extends State<FeedPage> {
               ],
             ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        stream: FirebaseFirestore.instance.collection("posts").orderBy("datePublished", descending: true).snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -59,8 +59,8 @@ class _FeedPageState extends State<FeedPage> {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (ctx, index) => Container(
               margin: EdgeInsets.symmetric(
-                horizontal: width * 0.3,
-                vertical: 15,
+                horizontal: width * 0.05,
+                vertical: 10,
               ),
               child: PostCard(
                 snap: snapshot.data!.docs[index].data(),

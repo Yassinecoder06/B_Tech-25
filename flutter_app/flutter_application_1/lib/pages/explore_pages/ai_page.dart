@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/explore_pages/map_screen.dart';
 import 'package:flutter_application_1/services/storage_service_supa.dart';
+import 'package:flutter_application_1/utils/colors.dart';
 import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
@@ -124,13 +126,15 @@ class _AIPageState extends State<AIPage> {
           isTyping = false;
         });
       }, onError: (error) {
-        print("Error generating AI response: $error");
+        debugPrint("Error generating AI response: $error");
         setState(() {
           isTyping = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to process message')),
         );
+        }
       });
     } catch (e) {
       print("Error: $e");
@@ -225,8 +229,33 @@ class _AIPageState extends State<AIPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wander Sphere ChatBot'),
-      ),
+              backgroundColor: Colors.purple,
+              centerTitle: false,
+              title: const Text(
+                'Wander Sphere ChatBot',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.map,
+                    color: primaryColor,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
       body: (currUser == null)
           ? const Center(child: CircularProgressIndicator())
           : Column(

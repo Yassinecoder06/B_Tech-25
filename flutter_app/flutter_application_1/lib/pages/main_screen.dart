@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter_application_1/pages/ai_page.dart';
-import 'package:flutter_application_1/pages/feed_page.dart';
-import 'package:flutter_application_1/pages/search_page.dart';
-import 'package:flutter_application_1/pages/shop_page.dart';
-import 'package:flutter_application_1/pages/profile_page.dart';
+import 'package:flutter_application_1/pages/explore_pages/ai_page.dart';
+import 'package:flutter_application_1/pages/home_pages/feed_page.dart';
+import 'package:flutter_application_1/pages/search_pages/search_page.dart';
+import 'package:flutter_application_1/pages/profile_pages/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/pages/shop_pages/exchange_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,13 +20,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+    final String itemid = 'qrcode';
 
     List<Widget> widgetOptions = <Widget>[
       const FeedPage(),
       const SearchPage(),
       const AIPage(),
-      const ShopPage(),
-      ProfilePage(uid: currentUserUid ?? ''), // Fallback if user is not logged in
+      ExchangePage(itemId: itemid),
+      ProfileScreen(uid: currentUserUid ?? ''), // Fallback if user is not logged in
     ];
 
     return Scaffold(
